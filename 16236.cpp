@@ -1,132 +1,125 @@
 #include <iostream>
 #include <vector>
-#include <map>
-#include <climits>
 #include <queue>
+#include <climits>
+#include <map>
+// #include <iomanip>
+
 
 using namespace std;
 
+int N;
 vector<vector<int> > vec;
-map<int, vector<pair<int, int> > > mp;
-
-int size_v = 2;
-
-int time_v = 0;
 
 const int dx[4] = {1, -1, 0, 0};  // 방향: 아래, 위, 오른쪽, 왼쪽
 const int dy[4] = {0, 0, 1, -1};  // 방향: 아래, 위, 오른쪽, 왼쪽
 
+int size_v = 2;
+int eat_v = 0;
+int time_v = 0;
 
-int distance(int x1, int y1, int x2, int y2) { // (2, 1) - (0, 2)
-    int N = vec.size();
-    vector<vector<int> > dist(N, vector<int>(N, -1));  // -1은 아직 방문하지 않은 셀을 의미함
-    
-    queue<pair<int, int> > q;
-    q.push(make_pair(x1, y1));
-    dist[x1][y1] = 0;
+// BFS를 사용하여 가장 가까운 먹이를 찾는 함수
+pair<int, pair<int, int> > find_feed(int x, int y) {
+    vector<vector<int> > dist(N, vector<int>(N, -1)); // -1은 아직 방문하지 않은 셀을 의미함, 셀은 거리가 들어간다.
+    queue<pair<int, int> > q; // BFS에선 queue를 사용 - queue에는 밟는 칸을 넣음 (물고기 위치X)
+    q.push(make_pair(x, y));
+    dist[x][y] = 0; // 현재 위치, 거리 = 0
+
+    pair<int, int> target = make_pair(-1, -1); // 이전 물고기의 위치 좌표
+    int min_dist = INT_MAX;
 
     while (!q.empty()) {
-        int x = q.front().first;
-        int y = q.front().second;
+        int cx = q.front().first;
+        int cy = q.front().second;
+        int cd = dist[cx][cy]; 
         q.pop();
 
-        // 목표 위치에 도달했으면 거리 반환
-        if (x == x2 && y == y2) {
-            return dist[x][y];
-        }
-
-        // 이웃 셀 탐색
         for (int i = 0; i < 4; ++i) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
+            int nx = cx + dx[i];
+            int ny = cy + dy[i];
 
-            // 이웃 셀이 격자 경계 내에 있고 방문하지 않았으며 접근 가능한 셀인지 확인
-            if (nx >= 0 && nx < N && ny >= 0 && ny < N && dist[nx][ny] == -1) {
-                if (vec[nx][ny] <= size_v) {
-                    dist[nx][ny] = dist[x][y] + 1;
-                    q.push(make_pair(nx, ny));
+            // (범위 밖 제외) && (방문하지 않은 곳) && (자기보다 덩치가 작은 물고기) || (0 빈칸)
+            if (nx >= 0 && nx < N && ny >= 0 && ny < N && dist[nx][ny] == -1 && vec[nx][ny] <= size_v) {
+                dist[nx][ny] = cd + 1; // cd 제자리에서 인접(+1)한 자리 
+
+                // 물고기가 있는 자리라면
+                if (vec[nx][ny] > 0 && vec[nx][ny] < size_v) {
+                    // 최소 거리보다 작으면 교체
+                    if (dist[nx][ny] < min_dist) {
+                        min_dist = dist[nx][ny];
+                        target = make_pair(nx, ny); // 이전 물고기
+                    // 최소 거리가 같을 때 
+                    } else if (dist[nx][ny] == min_dist) {
+                        // 이전 물고기보다 현재 물고기가 우선순위가 더 위 또는 왼쪽
+                        if (nx < target.first || (nx == target.first && ny < target.second)) {
+                            target = make_pair(nx, ny);
+                        }
+                    }
                 }
+                q.push(make_pair(nx, ny));
             }
         }
     }
-    
-    // 목표 위치에 도달할 수 없으면 -1 반환
-    return -1;
-}
 
-void func(int x, int y, int index) {
-    int min_v = INT_MAX;
-    int next_x, next_y;
-    for(int i=0;i<mp[index].size();i++) {
-        cout << x  << " " << y << " " << mp[index][i].first << " " << mp[index][i].second << "\n";
-        int dist = distance(x, y, mp[index][i].first, mp[index][i].second);
-        if(min_v == dist) {
-            // 거리가 같다면 위, 왼쪽 순
-
-            if(next_y < mp[index][i].second) {
-                min_v = dist;
-                next_x = mp[index][i].first;
-                next_y = mp[index][i].second;
-            } else if (next_y == mp[index][i].second && next_x < mp[index][i].first) {
-                min_v = dist;
-                next_x = mp[index][i].first;
-                next_y = mp[index][i].second;
-            } 
-            
-        } else if (min_v > dist) {
-            min_v = dist;
-            next_x = mp[index][i].first;
-            next_y = mp[index][i].second;
-        }
+    if (target.first == -1 && target.second == -1) {
+        return make_pair(-1, make_pair(-1, -1));
     }
-       
-    if(mp[index].size() <= 0 || index > 6) return;
 
-    func(next_x, next_y, index++);
+    // cout << "------------------------------------\n";
+    // for(int i=0;i<N;i++) {
+    //     for(int j=0;j<N;j++) {
+    //         if (dist[i][j] == -1) {
+    //             cout << setw(2) << setfill(' ') << "-1" << " ";
+    //         } else {
+    //             cout << setw(2) << setfill(' ') << dist[i][j] << " ";
+    //         }
+    //     }
+    //     cout << "\n";
+    // }
 
+    return make_pair(min_dist, target);
 }
 
-int main()
-{
-    /* 구현 - 완전탐색
-        기능 요구사항
-        NxN => 물고기 M, 아기상어 1마리
-        아기상어 크기 = 2 , 1초에 상하좌우 이동
-        자신 보다 큰 물고기가 있는 곳은 지나갈 수 없다.
-        자신과 같은 물고기는 먹을 수 없다. 하지만 지나갈 수 있다
-        자신보다 작은 물고기는 먹고 지나가고
+void moveSharkAndEat(int x, int y) {
+    while (true) {
+        pair<int, pair<int, int> > result = find_feed(x, y);
+        int min_dist = result.first; // 최소 거리
+        pair<int, int> target = result.second; // 최소 거리의 물고기가 있는 좌표
 
-        더이상 먹을 수 있는 물고기가 없다 - 엄마 상어에게 도움 => 끝
-        가장 가까운 순으로 물고기 먹음
-        거리는 최소 거리, 거리가 같다면 위 , 왼쪽 순
-        아기상어 이동 1초
-        자신의 크기와 같은 수의 물고기 먹을 때 마다 크기 1 증가
-        몇초 동안 버티는지
+        if (min_dist == -1) break; // 최소 거리가 -1 을 return 하면 종료
 
-        0: 빈 칸
-        1, 2, 3, 4, 5, 6: 칸에 있는 물고기의 크기
-        9: 아기 상어의 위치
-    */ 
+        int next_x = target.first; 
+        int next_y = target.second;
 
-    int N;
+        vec[next_x][next_y] = 0; // 물고기 먹었으니 빈칸(0)으로 대체
+        time_v += min_dist;
+        eat_v++;
+
+        if (eat_v == size_v) {
+            size_v++;
+            eat_v = 0;
+        }
+
+        x = next_x;
+        y = next_y;
+    }
+}
+
+int main() {
     cin >> N;
-    vec.resize(N, vector<int>(N));
-    int x, y;
-    for(int i=0;i<N;i++) {
-        for(int j=0;j<N;j++) {
-            cin >> vec[i][j];
-            if(vec[i][j] == 9) {
-                x = i;
-                y = j;
-            } else if (vec[i][j] > 0) {
-                mp[vec[i][j]].push_back(make_pair(i, j));
-            }
+    pair<int, int> shark;
+    vec.assign(N, vector<int>(N));
 
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            cin >> vec[i][j];
+            if (vec[i][j] == 9) {
+                shark = make_pair(i, j);
+                vec[i][j] = 0;
+            }
         }
     }
-    // func(x, y, 1);
 
-    cout << distance(2, 1, 0, 2);
-
+    moveSharkAndEat(shark.first, shark.second);
     cout << time_v;
 }
