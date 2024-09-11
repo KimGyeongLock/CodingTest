@@ -31,6 +31,7 @@ int main() {
     [aaabbaaa]baab -> 2개 교체
     = 12번 (n)
     -> 최소 2번 교체가 필요
+
     */
 
     // a 의 개수 구하기
@@ -38,9 +39,6 @@ int main() {
     for(int i = 0; i < s.length(); i++) {
         if(s[i] == 'a') aCount++;
     }
-
-    cout << s.substr(2, -3) << "\n";
-
 
     string window;
     int min_value = 1001;
@@ -57,3 +55,46 @@ int main() {
 
    cout << min_value;
 }
+
+/*
+최적화 코드
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    string s;
+    cin >> s;
+
+    // a의 개수 구하기
+    int aCount = count(s.begin(), s.end(), 'a');
+    
+    // 원형 처리를 위해 문자열을 두 번 이어붙이기
+    s += s;
+
+    // 첫 번째 윈도우에서 b의 개수 세기
+    int bCount = 0;
+    for(int i = 0; i < aCount; i++) {
+        if(s[i] == 'b') bCount++;
+    }
+
+    // 최소 교환 횟수 초기화
+    int min_value = bCount;
+
+    // 슬라이딩 윈도우로 최소 교환 횟수 찾기
+    for(int i = 1; i < s.length() / 2; i++) {
+        // 왼쪽 끝이 빠지고 오른쪽 끝이 추가되므로 이를 반영
+        if(s[i - 1] == 'b') bCount--;
+        if(s[i + aCount - 1] == 'b') bCount++;
+        
+        // 최소값 갱신
+        min_value = min(min_value, bCount);
+    }
+
+    // 결과 출력
+    cout << min_value;
+
+    return 0;
+}
+*/
