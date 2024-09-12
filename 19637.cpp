@@ -44,3 +44,28 @@ int main()
     //     cout << "Power: " << entry.first << ", Style: " << entry.second << endl;
     // }
 }
+
+// int main()
+// {
+//     int N, M;
+//     cin.tie(0); ios::sync_with_stdio(0);
+//     cin >> N >> M;
+//     vector<string> style(N);
+//     vector<int> power(N);
+
+//     for (int i = 0; i < N; i++) {
+//         cin >> style[i] >> power[i];
+//     }
+
+//     int characters;
+//     for (int i = 0; i < M; i++) {
+//         cin >> characters;
+        
+//         auto upper = upper_bound(power.begin(), power.end(), characters-1); //characters-1 : characters 포함
+//         int index = distance(power.begin(), upper);
+
+//         cout << style[index] << "\n";
+//     }
+
+//     return 0;
+// }
