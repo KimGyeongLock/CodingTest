@@ -16,14 +16,7 @@ int main() {
     int s1length = s1.length();
     int s2length = s2.length();
 
-    v.resize(s1length + 1, vector<int>(s2length + 1));
-
-    for(int i = 0; i <= s1length; i++) {
-        v[i][0] = 0;
-    }
-    for(int i = 0; i <= s2length; i++) {
-        v[0][i] = 0;
-    }
+    v.resize(s1length + 1, vector<int>(s2length + 1, 0));
 
     int count = 0;
     for(int i = 1; i <= s1length; i++) {
