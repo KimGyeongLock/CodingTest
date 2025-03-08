@@ -19,8 +19,8 @@ int main()
         D[i][i] = 1; // i개 중 i를 뽑는 경우의 수 = 1개
     }
 
-    for(int i = 2; i <= N; i++) {
-        for(int j = 1; j <= i; j++) {
+    for(int i = 0; i <= N; i++) {
+        for(int j = 0; j < i; j++) {
             D[i][j] = D[i - 1][j] + D[i - 1][j - 1];
         }
     }
