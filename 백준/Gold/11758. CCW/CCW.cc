@@ -2,30 +2,23 @@
 
 using namespace std;
 
-int n[3], m[3];
-
-int main() {
+int main()
+{
     ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+    cin.tie(0);
+    cout.tie(0);
 
-    for(int i=0;i<3;i++) {
-        cin >> n[i] >> m[i];
-    }
-    int dx1 = n[1] - n[0];
-    int dy1 = m[1] - m[0];
-    int dx2 = n[2] - n[0];
-    int dy2 = m[2] - m[0];
+    int x1, y1, x2, y2, x3, y3;
+    cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
 
-    int crossProduct = dx1 * dy2 - dx2 * dy1;
+    int result = (x1 * y2 + x2 * y3 + x3 * y1) - (x2 * y1 + x3 * y2 + x1 * y3);
 
-    if(crossProduct > 0) {
-        cout << "1" << endl;
-    } else if(crossProduct < 0) {
-        cout << "-1" << endl;
+    if (result > 0) {
+        cout << 1;
+    } else if (result == 0) {
+        cout << 0;
     } else {
-        cout << "0" << endl;
+        cout << -1;
     }
 
-    return 0;
 }
