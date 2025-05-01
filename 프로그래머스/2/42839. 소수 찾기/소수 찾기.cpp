@@ -1,8 +1,8 @@
 #include <string>
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <cmath>
-#include <set>
 
 using namespace std;
 
@@ -22,8 +22,8 @@ int solution(string numbers) {
         for(int len = 1; len <= numbers.size(); len++) {
             int num = stoi(numbers.substr(0, len));
             candidates.insert(num);
-        }        
-    } while (next_permutation(numbers.begin(), numbers.end()));
+        }
+    } while(next_permutation(numbers.begin(), numbers.end()));
     
     for(int i : candidates) {
         if (isPrime(i)) {
