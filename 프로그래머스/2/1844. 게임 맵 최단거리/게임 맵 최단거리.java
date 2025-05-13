@@ -1,40 +1,46 @@
 import java.util.*;
+
 class Solution {
-    static boolean[][] visited;
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, 1, 0, -1};
+    boolean visited[][];
+    int dx[] = {1, 0, -1, 0};
+    int dy[] = {0, 1, 0, -1};
     public int solution(int[][] maps) {
-        visited = new boolean[maps.length][maps[0].length];
+        int n = maps.length;
+        int m = maps[0].length;
+        visited = new boolean[n][m];
         bfs(maps);
-        if (maps[maps.length - 1][maps[0].length - 1] == 1) return -1;
-        return maps[maps.length - 1][maps[0].length - 1];
+        return maps[n - 1][m - 1] == 1 ? -1 : maps[n - 1][m - 1];
     }
+    
     private void bfs(int[][] maps) {
+        Queue<Position> q = new LinkedList<>();
+        q.offer(new Position(0, 0));
         visited[0][0] = true;
-        Queue<int[]> q = new LinkedList<>();
-        q.add(new int[]{0, 0});
         
         while(!q.isEmpty()) {
-            int[] current = q.poll();
-            int x = current[0];
-            int y = current[1];
-            
-            if(x == maps.length - 1 && y == maps[0].length - 1) {
-                return;
-            }
-            
+            Position curr = q.poll();
+            int cx = curr.x;
+            int cy = curr.y;
             for(int i = 0; i < 4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];
-                
-                if(nx >= 0 && ny >= 0 && nx < maps.length && ny < maps[0].length) {
-                    if(!visited[nx][ny] && maps[nx][ny] == 1) {
-                        visited[nx][ny] = true;
-                        q.add(new int[]{nx, ny});
-                        maps[nx][ny] = maps[x][y] + 1; 
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
+                if (nx >= 0 && ny >= 0 && nx < maps.length && ny < maps[0].length) {
+                    if (!visited[nx][ny] && maps[nx][ny] == 1) {
+                        q.offer(new Position(nx, ny));
+                        maps[nx][ny] = maps[cx][cy] + 1;
                     }
                 }
             }
+        }
+    }
+    
+    class Position {
+        int x;
+        int y;
+        
+        Position(int x, int y) {
+            this.x = x;
+            this.y = y;
         }
     }
 }
