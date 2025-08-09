@@ -2,45 +2,29 @@ import java.util.*;
 
 class Solution {
     public int[] solution(String[] genres, int[] plays) {
-        HashMap<String, Integer> genrePlayCount = new HashMap<>();
-        HashMap<String, List<Song>> genreSongs = new HashMap<>();
+        HashMap<String, Integer> genreTotal = new HashMap<>();
+        Map<String, List<int[]>> byGenre = new HashMap<>();
         
-        for(int i = 0; i < genres.length; i++) {
-            genrePlayCount.put(genres[i], genrePlayCount.getOrDefault(genres[i], 0) + plays[i]);
-            
-            genreSongs.computeIfAbsent(genres[i], k -> new ArrayList<>()).add(new Song(i, plays[i]));
+        for (int i = 0; i < genres.length; i++) {
+            genreTotal.merge(genres[i], plays[i], Integer::sum);
+            byGenre.computeIfAbsent(genres[i], k -> new ArrayList<>())
+                .add(new int[]{plays[i], i});
         }
         
-        List<String> sortedGenres = new ArrayList<>(genrePlayCount.keySet());
-        sortedGenres.sort((a, b) -> { return genrePlayCount.get(b) - genrePlayCount.get(a); });
+        List<String> orderedGenres = new ArrayList<>(genreTotal.keySet());
+        orderedGenres.sort((a, b) -> genreTotal.get(b) - genreTotal.get(a));
         
-        List<Integer> answerList = new ArrayList<>();
-        
-        for(String genre : sortedGenres) {
-            List<Song> songs = genreSongs.get(genre);
-            
-            songs.sort((a, b) -> {
-                if(a.play == b.play) {
-                   return a.index - b.index;
-                } 
-                return b.play - a.play;
+        List<Integer> result = new ArrayList<>();
+        for (String g : orderedGenres) {
+            List<int[]> list = byGenre.get(g);
+            list.sort((x, y) -> {
+                if (y[0] != x[0]) return y[0] - x[0];
+                return x[1] - y[1];
             });
-            
-            for(int i = 0; i < Math.min(2, songs.size()); i++) {
-                answerList.add(songs.get(i).index);
+            for (int k = 0; k < Math.min(2, list.size()); k++) {
+                result.add(list.get(k)[1]);
             }
         }
-        
-        return answerList.stream().mapToInt(i -> i).toArray();
-    }
-    
-    class Song {
-        int index;
-        int play;
-        
-        Song(int index, int play){
-            this.index = index;
-            this.play = play;
-        }
+        return result.stream().mapToInt(i -> i).toArray();
     }
 }
