@@ -1,46 +1,37 @@
 import java.util.*;
 
 class Solution {
-    boolean visited[][];
-    int dx[] = {1, 0, -1, 0};
-    int dy[] = {0, 1, 0, -1};
+    private static final int[] dx = {-1, 0, 1, 0};
+    private static final int[] dy = {0, 1, 0, -1};
     public int solution(int[][] maps) {
         int n = maps.length;
         int m = maps[0].length;
-        visited = new boolean[n][m];
-        bfs(maps);
-        return maps[n - 1][m - 1] == 1 ? -1 : maps[n - 1][m - 1];
-    }
-    
-    private void bfs(int[][] maps) {
-        Queue<Position> q = new LinkedList<>();
-        q.offer(new Position(0, 0));
-        visited[0][0] = true;
+        int[][] dist = new int[n][m];
+        for (int i = 0; i < n; i++) Arrays.fill(dist[i], - 1);
+        
+        Queue<int[]> q = new LinkedList<>();
+        dist[0][0] = 1;
+        q.offer(new int[]{0, 0});
         
         while(!q.isEmpty()) {
-            Position curr = q.poll();
-            int cx = curr.x;
-            int cy = curr.y;
+            int[] cur = q.poll();
+            int x = cur[0];
+            int y = cur[1];
+            
+            if (x == n - 1 && y == m - 1) return dist[x][y];
+            
             for(int i = 0; i < 4; i++) {
-                int nx = cx + dx[i];
-                int ny = cy + dy[i];
-                if (nx >= 0 && ny >= 0 && nx < maps.length && ny < maps[0].length) {
-                    if (!visited[nx][ny] && maps[nx][ny] == 1) {
-                        q.offer(new Position(nx, ny));
-                        maps[nx][ny] = maps[cx][cy] + 1;
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                if (nx >= 0 && ny >= 0 && nx < n && ny < m) {
+                    if (maps[nx][ny] != 0 && dist[nx][ny] == -1) {
+                        q.offer(new int[]{nx, ny});
+                        dist[nx][ny] = dist[x][y] + 1;
                     }
                 }
             }
         }
-    }
-    
-    class Position {
-        int x;
-        int y;
         
-        Position(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
+        return -1;
     }
 }
