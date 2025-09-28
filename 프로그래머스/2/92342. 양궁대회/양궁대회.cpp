@@ -26,15 +26,9 @@ void updateBest(int score, vector<int>& cur) {
 }
 
 void dfs(int idx, int arrowsLeft, int score, vector<int>& cur) {
-    if (idx == 11) {
-        updateBest(score, cur);
-        return;
-    }
-    
     if (idx == 10) {
         cur[idx] = arrowsLeft;
         updateBest(score, cur);
-        cur[idx] = 0;
         return;
     }
     
@@ -46,7 +40,6 @@ void dfs(int idx, int arrowsLeft, int score, vector<int>& cur) {
     }
     
     int delta = (A[idx] > 0) ? 10 - idx : 0;
-    cur[idx] = 0;
     dfs(idx + 1, arrowsLeft, score - delta, cur);
 }
 
