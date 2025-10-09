@@ -1,70 +1,67 @@
 #include <string>
 #include <vector>
-#include <array>
 #include <queue>
+#include <array>
 
 using namespace std;
 
 struct State {
-  int x, y, dir;  
+    int x, y, dir;  
 };
 
 int solution(vector<vector<int>> board) {
     int n = board.size();
-    const int INF = 1e9;
+    int INF = 1e9;
     
-    auto freeCell = [&](int x, int y) -> bool {
-        return (0 <= x && x < n && 0 <= y && y < n && board[x][y] == 0);
-    };
-    
-    vector<vector<array<int, 2>>> dist(n , vector<array<int, 2>>(n, {INF, INF}));
+    vector<vector<array<int, 2>>> dist(n, vector<array<int, 2>>(n, {INF, INF}));
     queue<State> q;
-    
-    dist[0][0][0] = 0;
     q.push({0, 0, 0});
+    dist[0][0][0] = 0;
     
-    auto isGoal = [&](const State& s) -> bool {
-        if (s.dir == 0) {
-            return (s.x == n-1 && s.y == n-1) || (s.x == n-1 && s.y+1 == n-1);
-        } else {
-            return (s.x == n-1 && s.y == n-1) || (s.x+1 == n-1 && s.y == n-1);
-        }
+    auto free = [&](int x, int y) -> bool {
+        if (x >= 0 && x < n && y >= 0 && y < n && board[x][y] == 0) return true;
+        return false;
     };
     
-    while(!q.empty()) {
-        State cur = q.front(); q.pop();
-        int d = dist[cur.x][cur.y][cur.dir];
-        if (isGoal(cur)) return d;
-        
+    auto isGoal = [&](int x, int y, int dir) -> bool {
+        if (dir == 0) return (x == n-1 && y == n-1) || (x == n-1 && y+1 == n-1);
+        else return (x == n-1 && y == n-1) || (x+1 == n-1 && y == n-1);
+    };
+    
+    while(!q.empty())
+    {
+        auto cur = q.front(); q.pop();
         int x = cur.x, y = cur.y, dir = cur.dir;
-        
+        int d = dist[x][y][dir];
+        if (isGoal(x, y, dir)) return d;
         if (dir == 0) {
-            if (freeCell(x-1, y) && freeCell(x-1, y+1)) {
+            
+            if (free(x-1, y) && free(x-1, y+1)) {
                 if (dist[x-1][y][0] > d+1) {
                     dist[x-1][y][0] = d+1;
                     q.push({x-1, y, 0});
-                }
+                }  
             }
-            if (freeCell(x+1, y) && freeCell(x+1, y+1)) {
+            if (free(x+1, y) && free(x+1, y+1)) {
                 if (dist[x+1][y][0] > d+1) {
                     dist[x+1][y][0] = d+1;
                     q.push({x+1, y, 0});
-                }
+                }  
             }
-            if (freeCell(x, y+1) && freeCell(x, y+2)) {
+            if (free(x, y+1) && free(x, y+2)) {
                 if (dist[x][y+1][0] > d+1) {
                     dist[x][y+1][0] = d+1;
                     q.push({x, y+1, 0});
-                }
+                }  
             }
-            if (freeCell(x, y-1) && freeCell(x, y)) {
+            if (free(x, y-1) && free(x, y)) {
                 if (dist[x][y-1][0] > d+1) {
                     dist[x][y-1][0] = d+1;
                     q.push({x, y-1, 0});
-                }
+                }  
             }
             
-            if (freeCell(x-1, y) && freeCell(x-1, y+1)) {
+            if (free(x-1, y) && free(x-1, y+1)) {
                 if (dist[x-1][y][1] > d+1) {
                     dist[x-1][y][1] = d+1;
                     q.push({x-1, y, 1});
@@ -74,7 +71,7 @@ int solution(vector<vector<int>> board) {
                     q.push({x-1, y+1, 1});
                 }
             }
-            if (freeCell(x+1, y) && freeCell(x+1, y+1)) {
+            if (free(x+1, y) && free(x+1, y+1)) {
                 if (dist[x][y][1] > d+1) {
                     dist[x][y][1] = d+1;
                     q.push({x, y, 1});
@@ -85,42 +82,32 @@ int solution(vector<vector<int>> board) {
                 }
             }
         } else {
-            if (freeCell(x-1, y) && freeCell(x, y)) {
+            if (free(x-1, y) && free(x, y)) {
                 if (dist[x-1][y][1] > d+1) {
                     dist[x-1][y][1] = d+1;
                     q.push({x-1, y, 1});
-                }
+                }  
             }
-            if (freeCell(x+1, y) && freeCell(x+2, y)) {
+            if (free(x+1, y) && free(x+2, y)) {
                 if (dist[x+1][y][1] > d+1) {
                     dist[x+1][y][1] = d+1;
                     q.push({x+1, y, 1});
-                }
+                }  
             }
-            if (freeCell(x, y-1) && freeCell(x+1, y-1)) {
-                if (dist[x][y-1][1] > d+1) {
-                    dist[x][y-1][1] = d+1;
-                    q.push({x, y-1, 1});
-                }
-            }
-            if (freeCell(x, y+1) && freeCell(x+1, y+1)) {
+            if (free(x, y+1) && free(x+1, y+1)) {
                 if (dist[x][y+1][1] > d+1) {
                     dist[x][y+1][1] = d+1;
                     q.push({x, y+1, 1});
-                }
+                }  
+            }
+            if (free(x, y-1) && free(x+1, y-1)) {
+                if (dist[x][y-1][1] > d+1) {
+                    dist[x][y-1][1] = d+1;
+                    q.push({x, y-1, 1});
+                }  
             }
             
-            if (freeCell(x, y-1) && freeCell(x+1, y-1)) {
-                if (dist[x][y-1][0] > d+1) {
-                    dist[x][y-1][0] = d+1;
-                    q.push({x, y-1, 0});
-                }
-                if (dist[x+1][y-1][0] > d+1) {
-                    dist[x+1][y-1][0] = d+1;
-                    q.push({x+1, y-1, 0});
-                }
-            }
-            if (freeCell(x, y+1) && freeCell(x+1, y+1)) {
+            if (free(x, y+1) && free(x+1, y+1)) {
                 if (dist[x][y][0] > d+1) {
                     dist[x][y][0] = d+1;
                     q.push({x, y, 0});
@@ -130,7 +117,18 @@ int solution(vector<vector<int>> board) {
                     q.push({x+1, y, 0});
                 }
             }
+            if (free(x, y-1) && free(x+1, y-1)) {
+                if (dist[x][y-1][0] > d+1) {
+                    dist[x][y-1][0] = d+1;
+                    q.push({x, y-1, 0});
+                }
+                if (dist[x+1][y-1][0] > d+1) {
+                    dist[x+1][y-1][0] = d+1;
+                    q.push({x+1, y-1, 0});
+                }
+            }
         }
+        
     }
-    return -1;
+    return 0;
 }
