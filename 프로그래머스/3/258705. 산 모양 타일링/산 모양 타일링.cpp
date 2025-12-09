@@ -2,21 +2,20 @@
 #include <vector>
 
 using namespace std;
-constexpr int MOD = 10007;
+
 int solution(int n, vector<int> tops) {
-    vector<int> a(n+1, 0), b(n+1, 0);
+    const int MOD = 10007;
+    vector<int> dp1(n); // 마름모로 안끝남
+    vector<int> dp2(n); // 마름모로 끝남
     
-    a[0] = 0;
-    b[0] = 1;
+    dp1[0] = tops[0] == 0 ? 2 : 3;
+    dp2[0] = 1;
     
-    for (int i = 1; i <= n; i++) {
-        if (tops[i-1] == 1) {
-            a[i] = (a[i-1] + b[i-1]) % MOD;
-            b[i] = (2*a[i-1] + 3*b[i-1]) % MOD;
-        } else {
-            a[i] = (a[i-1] + b[i-1]) % MOD;
-            b[i] = (a[i-1] + 2*b[i-1]) % MOD;
-        }
+    for (int i = 1; i < n; i++) {
+        if (tops[i] == 1) dp1[i] = (dp1[i-1] * 3 + dp2[i-1] * 2) % MOD;
+        else if (tops[i] == 0) dp1[i] = (dp1[i-1] * 2 + dp2[i-1] * 1) % MOD;
+        dp2[i] = (dp1[i-1] + dp2[i-1]) % MOD;
     }
-    return (a[n] + b[n]) % 10007;
+    
+    return (dp1[n-1] + dp2[n-1])%MOD;
 }
