@@ -1,60 +1,65 @@
-#include <bits/stdc++.h>
+#include <string>
+#include <vector>
+#include <iostream>
+
 using namespace std;
 
-static const int DIS[4] = {10, 20, 30, 40};
+const int rate[4] = {10, 20, 30, 40};
 
-pair<int, int> bestAns = {0, 0}; // {plusCount, revenue}
-vector<int> chosen;             // chosen discount index per emoticon
-vector<vector<int>> U;
-vector<int> E;
+vector<vector<int>> usersG;
+vector<int> emotG;
+vector<int> chosen;
+int n, m;
 
+int bestA = 0, bestB = 0;
 void evaluate() {
-    int plusCnt = 0;
-    int revenue = 0;
-
-    for (auto &u : U) {
-        int minDisc = u[0];
-        int limit = u[1];
-
+    int a = 0, b = 0;
+    
+    for (int i = 0; i < n; i++) {
         int sum = 0;
-        for (int i = 0; i < (int)E.size(); i++) {
-            int d = DIS[chosen[i]];
-            if (d >= minDisc) {
-                // discounted price
-                sum += E[i] * (100 - d) / 100;
+        for (int j = 0; j < m; j++) {
+            if (usersG[i][0] <= chosen[j]) { // 이모티콘 구매
+                sum += emotG[j] * (100 - chosen[j]) / 100;
             }
         }
-
-        if (sum >= limit) {
-            plusCnt++;
-        } else {
-            revenue += sum;
+        if (sum >= usersG[i][1]) { // 이모티콘 구매 취소 & 플러스 가입
+            a++;
+        } else { // 이모티콘 구매
+            b += sum;
         }
     }
-
-    if (plusCnt > bestAns.first) bestAns = {plusCnt, revenue};
-    else if (plusCnt == bestAns.first && revenue > bestAns.second) bestAns = {plusCnt, revenue};
+    
+    if (a > bestA) {
+        bestA = a;
+        bestB = b;
+    } else if (a == bestA) {
+        if (b > bestB) {
+            bestA = a;
+            bestB = b;
+        }
+    }
 }
 
 void dfs(int idx) {
-    if (idx == (int)E.size()) {
+    if (idx == m) {
         evaluate();
         return;
     }
-    for (int k = 0; k < 4; k++) {
-        chosen[idx] = k;
+    
+    for (int i = 0; i < 4; i++) {
+        chosen[idx] = rate[i];
         dfs(idx + 1);
     }
 }
 
 vector<int> solution(vector<vector<int>> users, vector<int> emoticons) {
-    U = std::move(users);
-    E = std::move(emoticons);
-
-    chosen.assign(E.size(), 0);
-    bestAns = {0, 0};
+    n = users.size();
+    m = emoticons.size();
+    
+    usersG = move(users);
+    emotG = move(emoticons);
+    chosen.resize(m);
 
     dfs(0);
-
-    return {bestAns.first, bestAns.second};
+    return {bestA, bestB};
 }
