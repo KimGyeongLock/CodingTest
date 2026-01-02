@@ -1,48 +1,60 @@
-#include <string>
-#include <vector>
-#include <functional>
-
+#include <bits/stdc++.h>
 using namespace std;
 
-const int rates[4] = {10, 20, 30, 40};
-int m; 
-vector<int> choice;
-pair<int, int> best = {0, 0};
+static const int DIS[4] = {10, 20, 30, 40};
+
+pair<int, int> bestAns = {0, 0}; // {plusCount, revenue}
+vector<int> chosen;             // chosen discount index per emoticon
+vector<vector<int>> U;
+vector<int> E;
+
+void evaluate() {
+    int plusCnt = 0;
+    int revenue = 0;
+
+    for (auto &u : U) {
+        int minDisc = u[0];
+        int limit = u[1];
+
+        int sum = 0;
+        for (int i = 0; i < (int)E.size(); i++) {
+            int d = DIS[chosen[i]];
+            if (d >= minDisc) {
+                // discounted price
+                sum += E[i] * (100 - d) / 100;
+            }
+        }
+
+        if (sum >= limit) {
+            plusCnt++;
+        } else {
+            revenue += sum;
+        }
+    }
+
+    if (plusCnt > bestAns.first) bestAns = {plusCnt, revenue};
+    else if (plusCnt == bestAns.first && revenue > bestAns.second) bestAns = {plusCnt, revenue};
+}
+
+void dfs(int idx) {
+    if (idx == (int)E.size()) {
+        evaluate();
+        return;
+    }
+    for (int k = 0; k < 4; k++) {
+        chosen[idx] = k;
+        dfs(idx + 1);
+    }
+}
 
 vector<int> solution(vector<vector<int>> users, vector<int> emoticons) {
-    vector<int> answer(2);
-    m = emoticons.size();
-    choice.resize(m, 0);
-    
-    function<void(int)> dfs = [&](int idx) {
-        if (idx == m) {
-            int cnt = 0;
-            int total = 0;
-            for (int i = 0; i < users.size(); i++) {
-                int sum = 0;
-                for (int j = 0; j < m; j++) {
-                    if (users[i][0] <= rates[choice[j]]) {
-                        sum += emoticons[j] * (100 - rates[choice[j]]) / 100;
-                        if(sum >= users[i][1]) {
-                            cnt++;
-                            break;
-                        }
-                    }
-                }
-                if(sum < users[i][1]) total += sum;
-            }
-            
-            if (best.first < cnt) best = {cnt, total};
-            else if (best.first == cnt && best.second < total) best = {cnt, total};
-            return;
-        }
-        for (int k = 0; k < 4; k++) {
-            choice[idx] = k; // 10, 20, 30, 40
-            dfs(idx+1);
-        }
-    };
-    
-    
+    U = std::move(users);
+    E = std::move(emoticons);
+
+    chosen.assign(E.size(), 0);
+    bestAns = {0, 0};
+
     dfs(0);
-    return {best.first, best.second};
+
+    return {bestAns.first, bestAns.second};
 }
