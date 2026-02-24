@@ -1,58 +1,70 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <unordered_map>
 #include <map>
-#include <iostream>
 #include <cmath>
-#include <algorithm>
 
 using namespace std;
 
 vector<string> split(string str, char del) {
     vector<string> res;
-    stringstream ss(str);
+    istringstream iss(str);
     string word;
-    while (getline(ss, word, del)) {
+    while(getline(iss, word, del)) {
         res.push_back(word);
     }
     return res;
 }
 
-int diff(string a, string b) {
-    int ah, am, bh, bm;
-    ah = stoi(a.substr(0, 2));
-    am = stoi(a.substr(3, 2));
-    bh = stoi(b.substr(0, 2));
-    bm = stoi(b.substr(3, 2));
-    return ah * 60 + am - (bh * 60 + bm);
+int timeToInt(string x) {
+    int h = stoi(x.substr(0, 2));
+    int m = stoi(x.substr(3, 2));
+    return h * 60 + m;
+}
+
+int betweenTime(string a, string b) {
+    int t1 = timeToInt(a);
+    int t2 = timeToInt(b);
+    return t2 - t1;
 }
 
 vector<int> solution(vector<int> fees, vector<string> records) {
     vector<int> answer;
-    map<string, vector<string>> t;
     
-    for (string s : records) {
-        vector<string> vec = split(s, ' ');
-        string time = vec[0];
-        string number = vec[1];
-        t[number].push_back(time);
-    }
-    
-    for (auto vec : t) {
-        vector<string> v = vec.second;
-        if (v.size() % 2 != 0) v.push_back("23:59");
-        int sum = 0;
-        for (int i = 0; i < v.size(); i += 2) {
-            sum += diff(v[i + 1], v[i]);
-        }
-        if (sum <= fees[0]) {
-            answer.push_back(fees[1]);
+    unordered_map<string, string> mp;
+    map<string, int> ans;
+    for (string r : records) {
+        vector<string> sp = split(r, ' ');
+        string time = sp[0], number = sp[1], type = sp[2];
+        if (type == "IN") {
+            mp[number] = time;
         } else {
-            int total = fees[1];
-            total += (ceil((double)(sum - fees[0]) / fees[2])) * fees[3];
-            answer.push_back(total);
+            string intime = mp[number];
+            int total = betweenTime(intime, time);
+            ans[number] += total;
+            mp.erase(number);
         }
     }
-
+    
+    for (auto& m : mp) {
+        string intime = m.second;
+        int total = betweenTime(intime, "23:59");
+        ans[m.first] += total;
+    }
+    
+    for (auto& m : ans) {
+        int time = m.second;
+        int money = 0;
+        if (time >= fees[0]) {
+            money += fees[1];
+            time -= fees[0];
+        } else {
+            answer.push_back(fees[1]);
+            continue;
+        }
+        money += ceil((double) time / fees[2]) * fees[3];
+        answer.push_back(money);
+    }
     return answer;
 }
