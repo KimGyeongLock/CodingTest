@@ -1,57 +1,58 @@
 #include <string>
 #include <vector>
-#include <climits>
 
 using namespace std;
 
-int N;
-vector<int> A;
-int bestDiff;
-vector<int> bestAns;
+int bestDiff = 0;
+vector<int> best;
 
-void updateBest(int score, vector<int>& cur) {
-    if (score > bestDiff) {
-        bestDiff = score;
-        bestAns = cur;
-    } else if (score == bestDiff) {
-        for (int i = 10; i >= 0; i--) {
-            if (cur[i] != bestAns[i]) {
-                if (cur[i] > bestAns[i]) {
-                    bestAns = cur;
-                }
-                break;
-            }
-        }
+bool better(const vector<int>& cand, const vector<int>& cur) {
+    for (int i = 10; i >= 0; i--) {
+        if (cand[i] != cur[i]) return cand[i] > cur[i];
     }
+    return false;
 }
 
-void dfs(int idx, int arrowsLeft, int score, vector<int>& cur) {
+void dfs(int idx, int left, vector<int>& info, int diff, vector<int>& res) {
+    if (idx == 11) {
+        if (diff <= 0) return;
+
+        if (bestDiff < diff) {
+            bestDiff = diff;
+            best = res;
+        } else if (diff == bestDiff) {
+            if (better(res, best)) {
+                best = res;
+            }
+        }
+        return;
+    }
     if (idx == 10) {
-        cur[idx] = arrowsLeft;
-        updateBest(score, cur);
+        res[idx] = left;
+        dfs(11, 0, info, diff, res);
+        // res[idx] = 0;
         return;
     }
     
-    int need = A[idx] + 1;
-    if (arrowsLeft >= need) {
-        cur[idx] = need;
-        dfs(idx + 1, arrowsLeft - need, score + 10 - idx, cur);
-        cur[idx] = 0;
-    }
+    int score = 10 - idx;
     
-    int delta = (A[idx] > 0) ? 10 - idx : 0;
-    dfs(idx + 1, arrowsLeft, score - delta, cur);
+    //라이언이 질 경우
+    if (info[idx] > 0) dfs(idx+1, left, info, diff - score, res);
+    else dfs(idx+1, left, info, diff, res);
+    
+    //라이언이 이길 경우
+    int need = info[idx] + 1;
+    if (left >= need) {
+        res[idx] = need;
+        dfs(idx+1, left - need, info, diff + score, res);
+        res[idx] = 0;
+    }    
 }
 
 vector<int> solution(int n, vector<int> info) {
-    N = n;
-    A = info;
-    bestDiff = INT_MIN;
+    vector<int> res(11, 0);
+    dfs(0, n, info, 0, res);
     
-    bestAns.assign(11, 0);
-    vector<int> cur(11, 0);
-    dfs(0, N, 0, cur);
-    
-    if (bestDiff <= 0) return {-1};
-    return bestAns;
+    if (bestDiff == 0) return {-1};
+    return best;
 }
