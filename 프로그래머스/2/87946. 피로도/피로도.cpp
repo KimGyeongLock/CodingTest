@@ -1,25 +1,26 @@
 #include <string>
 #include <vector>
-#include <iostream>
 
 using namespace std;
 
-int answer = 0;
-void dfs(vector<bool> visited, vector<vector<int>> dungeons, int depth, int k) {
-    for(int i = 0; i < dungeons.size(); i++) {
-        if(!visited[i] && k >= dungeons[i][0]) {
-            // cout << k << " " << dungeons[i][0] << "\n";
-            visited[i] = true;
-            dfs(visited, dungeons, depth + 1, k - dungeons[i][1]);
-            answer = max(answer, depth);
-            visited[i] = false;
-        }
+int best = 0;
+vector<bool> used;
+
+void dfs(int k, vector<vector<int>>& dungeons, int cnt) {
+    best = max(best, cnt);
+    
+    for (int i = 0; i < dungeons.size(); i++) {
+        if (used[i]) continue;
+        if (k < dungeons[i][0]) continue;
+        used[i] = true;
+        dfs(k - dungeons[i][1], dungeons, cnt+1);
+        used[i] = false;
     }
 }
 
 int solution(int k, vector<vector<int>> dungeons) {
-    vector<bool> visited(dungeons.size(), false);
-    dfs(visited, dungeons, 1, k);
+    used.assign(dungeons.size(), false);
     
-    return answer;
+    dfs(k, dungeons, 0);
+    return best;
 }
