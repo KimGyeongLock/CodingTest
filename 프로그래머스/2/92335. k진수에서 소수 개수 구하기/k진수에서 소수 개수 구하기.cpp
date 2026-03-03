@@ -1,62 +1,55 @@
 #include <string>
 #include <vector>
-#include <iostream>
 #include <algorithm>
+#include <sstream>
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
-vector<int> jinsu(int n, int k) {
-    vector<int> res;
-    while(n >= k) {
-        res.push_back(n % k);
+string jinsu(int n, int k) {
+    if (k == 10) return to_string(n);
+    string res = "";
+    while(n > 0) {
+        res.push_back((n % k) + '0');
         n /= k;
     }
-    if (n <= k) res.push_back(n);
     reverse(res.begin(), res.end());
     return res;
 }
 
-long vecToInt(vector<int>& v) {
-    long res = 0;
-    for (int i = 0; i < v.size(); i++) {
-        res += v[i] * (pow(10, v.size() - i - 1));
+vector<string> split(string s, char del) {
+    vector<string> res;
+    istringstream iss(s);
+    string word;
+    
+    while(getline(iss, word, del)) {
+        res.push_back(word);
     }
     return res;
-}
+} 
 
-bool isPrime(long x) {
-    if (x < 2) return false;
-    for (long i = 2; i * i <= x; i++) {
-        if (x % i == 0) return false;
+bool isPrime(string s) {
+    if (s.empty()) return false;
+    long long n = stoll(s);
+    if (n < 2) return false;
+    
+    for (long long i = 2; i * i <= n; i++) {
+        if (n % i == 0) return false;
     }
     return true;
 }
 
 int solution(int n, int k) {
     int answer = 0;
+    string s = jinsu(n, k);
     
-    vector<int> vec = jinsu(n, k);
-    vector<int> temp;
-    for (int i : vec) {
-        if (i == 0) {
-            if (!temp.empty()) {
-                long res = vecToInt(temp);
-                if (isPrime(res)) {
-                    answer++;
-                }
-                temp.clear();
-            }
-        } else {
-            temp.push_back(i);
-        }
-    }
-    if (!temp.empty()) {
-        long res = vecToInt(temp);
-        if (isPrime(res)) {
+    vector<string> q = split(s, '0');
+    
+    for (string c : q) {
+        if (isPrime(c)) {
             answer++;
         }
     }
-    
     return answer;
 }
