@@ -1,98 +1,96 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <string>
+#include <unordered_map>
+#include <deque>
 
 using namespace std;
 
-vector<vector<int> > vec; 
-vector<int> sec;
-vector<char> dir;
-queue<pair<int, int> > q;
+const int dx[4] = {0, 1, 0, -1};
+const int dy[4] = {1, 0, -1, 0};
 
-int N, K, L;
-int cdir = 1; //동:1 서: 2 북: 3 남: 4
+int solution(int n,
+             const vector<pair<int, int>>& apples,
+             const vector<pair<int, char>>& commands) {
 
-//bfs인줄 알았지만 구현
-int playGame() {
-    int count = 1;
-    int x = 0, y = 0;
-
-    while(1){
-        // 현재 방향으로 머리 이동
-        if(cdir == 1) y++;
-        else if(cdir == 2) y--;
-        else if(cdir == 3) x--;
-        else if(cdir == 4) x++;
-
-        // 범위 밖 또는 자기 몸에 부딪히면 게임 종료
-        if(x < 0 || x >= N || y < 0 || y >= N || vec[x][y] == -1) break;
-
-        q.push(make_pair(x, y));
-
-        if(vec[x][y] != 1) { // 사과가 없는 경우
-            if(q.size()>0) {
-                pair<int, int> tail = q.front();
-                q.pop();
-                vec[tail.first][tail.second] = 0;
-            }
-        }
-        vec[x][y] = -1;
-
-        
-        // 방향 전환 체크
-        for(int i=0;i<L;i++) {
-            if(sec[i] == count) {
-                if(dir[i] == 'L') {
-                    if(cdir == 1) cdir = 3;
-                    else if(cdir == 2) cdir = 4;
-                    else if(cdir == 3) cdir = 2;
-                    else if(cdir == 4) cdir = 1;
-                } else if(dir[i] == 'D') {
-                    if(cdir == 1) cdir = 4;
-                    else if(cdir == 2) cdir = 3;
-                    else if(cdir == 3) cdir = 1;
-                    else if(cdir == 4) cdir = 2;
-                }
-            }
-        }
-        count++;
+    vector<vector<bool>> apple_position(n, vector<bool>(n, false));
+    for (auto a : apples) {
+        apple_position[a.first - 1][a.second - 1] = true;
     }
-    return count;
+
+    unordered_map<int, char> com;
+    for (auto c : commands) {
+        com[c.first] = c.second;
+    }
+
+
+    int time = 0;
+    int x = 0, y = 0;
+    int dir = 0;
+    vector<vector<bool>> snake_position(n, vector<bool>(n, false));
+    deque<pair<int, int>> snake;
+    
+    snake_position[x][y] = true;
+    snake.push_back({0, 0});
+
+    while (true) {
+        time++;
+
+        int nx = snake.back().first + dx[dir];
+        int ny = snake.back().second + dy[dir];
+
+        if (nx < 0 || nx >= n || ny < 0 || ny >= n) break;
+
+        if (snake_position[nx][ny]) break;
+
+        snake.push_back({nx, ny});
+        snake_position[nx][ny] = true;
+
+        if (apple_position[nx][ny]) {
+            apple_position[nx][ny] = false;
+        } else {
+            auto tail = snake.front();
+            snake.pop_front();
+            snake_position[tail.first][tail.second] = false;
+        }
+
+        if (com.count(time)) {
+            if (com[time] == 'L') dir = (dir + 3) % 4;
+            if (com[time] == 'D') dir = (dir + 1) % 4;
+        }
+       
+    }
+    return time;
 }
 
 int main() {
-    /*
-        사과를 먹으면 뱀 길이가 늘어난다.
-        벽 또는 자기 자신의 몸과 부딪히면 겜이 끝
-        NxN
-        뱀의 위치(0,0), 뱀의 길이 = 1 오른쪽을 향함
-        머리를 늘려 다음칸으로 이동
-            사과가 있다면 사과는 없어지고 꼬리는 고정 => 길이 + 1
-            사과가 없다면 꼬리를 당긴다. => 길이 고정
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-        n초 뒤 L(왼쪽) 또는 D(오른쪽)
-    */
+    int n;
+    cin >> n;
 
-    cin >> N >> K;
+    int k;
+    cin >> k;
 
-    vec.assign(N, vector<int>(N, 0));
-   
-    for(int i=0;i<K;i++) {
-        int a,b;
-        cin >> a >> b;
-        vec[a-1][b-1] = 1;
+    vector<pair<int, int>> apples(k);
+    for (int i = 0; i < k; i++) {
+        int r, c;
+        cin >> r >> c;
+        apples[i] = {r, c};
     }
 
-    cin >> L;
-    sec.resize(L);
-    dir.resize(L);
-    for(int i=0;i<L;i++) {
-        cin >> sec[i] >> dir[i];
+    int l;
+    cin >> l;
+
+    vector<pair<int, char>> commands(l);
+    for (int i = 0; i < l; i++) {
+        int x;
+        char ch;
+        cin >> x >> ch;
+        commands[i] = {x, ch};
     }
 
-    q.push(make_pair(0, 0));
-    vec[0][0] = -1;
-
-    int sec = playGame();
-    cout << sec;
+    cout << solution(n, apples, commands) << '\n';
+    return 0;
 }
