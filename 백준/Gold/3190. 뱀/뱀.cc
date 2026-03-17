@@ -13,41 +13,39 @@ int solution(int n,
              const vector<pair<int, int>>& apples,
              const vector<pair<int, char>>& commands) {
 
-    vector<vector<bool>> apple_position(n, vector<bool>(n, false));
-    for (auto a : apples) {
-        apple_position[a.first - 1][a.second - 1] = true;
+    vector<vector<bool>> apples_position(n, vector<bool>(n, false));
+    for (auto& a : apples) {
+        apples_position[a.first - 1][a.second - 1] = true;
     }
 
     unordered_map<int, char> com;
-    for (auto c : commands) {
+    for (auto& c : commands) {
         com[c.first] = c.second;
     }
 
-
-    int time = 0;
-    int x = 0, y = 0;
-    int dir = 0;
     vector<vector<bool>> snake_position(n, vector<bool>(n, false));
     deque<pair<int, int>> snake;
-    
-    snake_position[x][y] = true;
+
+    snake_position[0][0] = true;
     snake.push_back({0, 0});
 
-    while (true) {
+    int time = 0;
+    int dir = 0;
+
+    while(true) {
         time++;
 
         int nx = snake.back().first + dx[dir];
         int ny = snake.back().second + dy[dir];
 
         if (nx < 0 || nx >= n || ny < 0 || ny >= n) break;
-
         if (snake_position[nx][ny]) break;
 
-        snake.push_back({nx, ny});
         snake_position[nx][ny] = true;
+        snake.push_back({nx, ny});
 
-        if (apple_position[nx][ny]) {
-            apple_position[nx][ny] = false;
+        if (apples_position[nx][ny]) {
+            apples_position[nx][ny] = false;
         } else {
             auto tail = snake.front();
             snake.pop_front();
@@ -58,8 +56,8 @@ int solution(int n,
             if (com[time] == 'L') dir = (dir + 3) % 4;
             if (com[time] == 'D') dir = (dir + 1) % 4;
         }
-       
     }
+
     return time;
 }
 
