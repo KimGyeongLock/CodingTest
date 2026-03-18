@@ -3,22 +3,15 @@
 
 using namespace std;
 
+const int dx[5] = {0, 0, 0, -1, 1};
+const int dy[5] = {0, 1, -1, 0, 0}; 
+
 void solution(int n, int m, int x, int y, int k, vector<vector<int>> map, vector<int> command) {
     int up = 0, down = 0, left = 0, right = 0, front = 0, back = 0;
 
     for (int i = 0; i < k; i++) {
-        int nx = x;
-        int ny = y;
-
-        if (command[i] == 1) {
-            ny += 1;
-        } else if (command[i] == 2) {
-            ny -= 1;
-        } else if (command[i] == 3) {
-            nx -= 1;
-        } else if (command[i] == 4) {
-            nx += 1;
-        }
+        int nx = x + dx[command[i]];
+        int ny = y + dy[command[i]];
 
         if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
         x = nx; y = ny;
