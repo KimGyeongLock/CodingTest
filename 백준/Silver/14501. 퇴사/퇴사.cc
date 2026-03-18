@@ -2,39 +2,37 @@
 #include <vector>
 
 using namespace std;
-vector<int> t;
-vector<int> p;
 
-int sum = 0;
-int max_v = 0;
+int answer = 0;
 
-void func(int index){
-  for(int i=index;i<t.size();i++){
-    if(i+t[i] <= t.size()) {
-      //cout << p[i] << " ";
-      sum += p[i];
-      func(i+t[i]);
-      //cout << sum << "\n";
-      if(sum > max_v) max_v = sum;
-      sum -= p[i];
+void dfs(int start, int total, vector<int>& T, vector<int>& P) {
+    int n = T.size();
+    answer = max(answer, total);
+    for (int i = start + T[start]; i < n; i++) {
+        if (i + T[i] > n) continue;
+        dfs(i, total + P[i], T, P);
     }
-  }
-  
+}
+ 
+int solution(int n, vector<int> T, vector<int> P) {
+    
+    for (int i = 0; i < n; i++) {
+        if (i + T[i] <= n) {
+            dfs(i, P[i], T, P);
+        }
+    }
+
+    return answer;
 }
 
-int main() {
-  int N;
-  cin >> N;
-  t.resize(N);
-  p.resize(N);
-
-  for (int i = 0; i < N; i++) {
-    cin >> t[i] >> p[i];
-  }
-
-  // for (int i = 0; i < N; i++) {
-    func(0);
-  // }
-  cout << max_v;
-    
+int main()
+{
+    int N;
+    cin >> N;
+    vector<int> T(N), P(N);
+    for (int i = 0; i < N; i++) {
+        cin >> T[i] >> P[i];
+    }
+     
+    cout << solution(N, T, P);
 }
