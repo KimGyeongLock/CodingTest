@@ -1,30 +1,45 @@
 import java.util.*;
-
 class Solution {
     public int[] solution(String[] genres, int[] plays) {
-        HashMap<String, Integer> genreTotal = new HashMap<>();
-        Map<String, List<int[]>> byGenre = new HashMap<>();
-        
-        for (int i = 0; i < genres.length; i++) {
-            genreTotal.merge(genres[i], plays[i], Integer::sum);
-            byGenre.computeIfAbsent(genres[i], k -> new ArrayList<>())
-                .add(new int[]{plays[i], i});
+        int n = genres.length;
+        HashMap<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            map.put(genres[i], map.getOrDefault(genres[i], 0) + plays[i]);
+        }
+                
+        HashMap<String, ArrayList<int[]>> map2 = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            map2.putIfAbsent(genres[i], new ArrayList<>());
+            map2.get(genres[i]).add(new int[]{plays[i], i});
         }
         
-        List<String> orderedGenres = new ArrayList<>(genreTotal.keySet());
-        orderedGenres.sort((a, b) -> genreTotal.get(b) - genreTotal.get(a));
         
-        List<Integer> result = new ArrayList<>();
-        for (String g : orderedGenres) {
-            List<int[]> list = byGenre.get(g);
-            list.sort((x, y) -> {
-                if (y[0] != x[0]) return y[0] - x[0];
-                return x[1] - y[1];
+        for (ArrayList<int[]> list : map2.values()) {
+            list.sort((a, b) -> {
+                if (b[0] == a[0]) return a[1] - b[1];
+                return b[0] - a[0];
             });
-            for (int k = 0; k < Math.min(2, list.size()); k++) {
-                result.add(list.get(k)[1]);
-            }
         }
-        return result.stream().mapToInt(i -> i).toArray();
+        
+        ArrayList<String> genreList = new ArrayList<>(map.keySet());
+        genreList.sort((a, b) -> map.get(b) - map.get(a));
+        
+        ArrayList<Integer> answerList = new ArrayList<>();
+        
+        for (String genre : genreList) {
+            ArrayList<int[]> list = map2.get(genre);
+            
+            answerList.add(list.get(0)[1]);
+            if (list.size() > 1) {
+                answerList.add(list.get(1)[1]);
+            } 
+        }
+        
+        int[] answer = new int[answerList.size()];
+        for (int i = 0; i < answerList.size(); i++) {
+            answer[i] = answerList.get(i);
+        }
+        
+        return answer;
     }
 }
