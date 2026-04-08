@@ -1,29 +1,29 @@
 import java.util.*;
 class Solution {
     public int[] solution(int[] answers) {
-        List<Integer> list = new ArrayList<>();
-        int[] stuScore = new int[3];
-        int[][] students = {
-            {1, 2, 3, 4, 5},
-            {2, 1, 2, 3, 2, 4, 2, 5},
-            {3, 3, 1, 1, 2, 2, 4, 4, 5, 5}
-        };
+        int[] answer = {};
+        int[][] people = {{1, 2, 3, 4, 5},
+                          {2, 1, 2, 3, 2, 4, 2, 5},
+                          {3, 3, 1, 1, 2, 2, 4, 4, 5, 5}
+                         };
+        int[] point = {0, 0, 0};
         
-        int maxScore = 0;
-        for(int i = 0; i < 3; i++){
-            int score = 0;
-            for(int j = 0; j < answers.length; j++) {
-                if(answers[j] == students[i][j % students[i].length]) {
-                    score++;
-                }
-                stuScore[i] = score;
+        int n = answers.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 3; j++) {
+                int m = people[j].length;
+                if (answers[i] == people[j][i % m]) point[j]++;
             }
-            maxScore = Math.max(maxScore, score);
+        }
+        int max = Math.max(point[0], Math.max(point[1], point[2]));
+        
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            if (point[i] == max) {
+                list.add(i + 1);
+            }
         }
         
-        for(int i = 0; i < 3; i++) {
-            if (maxScore == stuScore[i]) list.add(i + 1);
-        }
-        return list.stream().mapToInt(i -> i).toArray();
+        return list.stream().mapToInt(Integer::intValue).toArray();
     }
 }
