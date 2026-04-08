@@ -1,14 +1,13 @@
 class Solution {
     public int solution(int[][] sizes) {
-        int maxWidth = 0, maxHeight = 0;
-        for(int[] size : sizes) {
-            int width = Math.max(size[0], size[1]);
-            int height = Math.min(size[0], size[1]);
+        int w = 0, h = 0;
+        for (int[] s : sizes) {
+            int a = Math.max(s[0], s[1]);
+            int b = Math.min(s[0], s[1]);
             
-            maxWidth = Math.max(maxWidth, width);
-            maxHeight = Math.max(maxHeight, height);
+            w = Math.max(w, a);
+            h = Math.max(h, b);
         }
-        
-        return maxWidth * maxHeight;
+        return w*h;
     }
 }
