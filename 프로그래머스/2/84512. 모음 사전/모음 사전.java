@@ -1,18 +1,19 @@
-import java.util.*;
 class Solution {
-    List<String> list = new ArrayList<>();
+    int answer = 0;
+    int cnt = 0;
     public int solution(String word) {
-        int answer = 0;
-        dfs("AEIOU", "", 0);
-        return list.indexOf(word) + 1;
+        dfs("", word);
+        return answer;
     }
-    private void dfs(String aeiou, String current, int depth) {
-        if (!current.equals("")) {
-            list.add(current);
+    
+    private void dfs(String word, String word2) {
+        if (word.equals(word2)) answer = cnt;
+        if (word.length() == 5) {
+            return;
         }
-        if (depth == 5) return;
-        for(int i = 0; i < aeiou.length(); i++) {
-            dfs(aeiou, current + aeiou.charAt(i), depth + 1);
+        for (char c : new char[]{'A', 'E', 'I', 'O', 'U'}) {
+            cnt++;
+            dfs(word + c, word2);
         }
     }
 }
