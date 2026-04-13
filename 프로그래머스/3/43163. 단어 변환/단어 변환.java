@@ -1,47 +1,33 @@
-import java.util.*;
 class Solution {
+    int answer = Integer.MAX_VALUE;
     public int solution(String begin, String target, String[] words) {
         boolean[] visited = new boolean[words.length];
-        Queue<Node> q = new LinkedList<>();
-        
-        q.add(new Node(begin, 0));
-        
-        while(!q.isEmpty()) {
-            Node current = q.poll();
-            
-            if(current.word.equals(target)) {
-                return current.count;
-            }
-            
-            for(int i = 0; i < words.length; i++) {
-                if (!visited[i] && canChange(current.word, words[i])) {
-                    visited[i] = true;
-                    q.add(new Node(words[i], current.count + 1));
-                }
-            }
-            
-        }
-        return 0;
+        dfs(0, begin, words, target, visited);
+        return answer == Integer.MAX_VALUE ? 0 : answer;
     }
     
-    private boolean canChange(String a, String b) {
-        int diff = 0;
-        for(int i = 0; i < a.length(); i++) {
-            if (a.charAt(i) != b.charAt(i)) {
-                diff++;
-            }
+    private boolean compare(String a, String b) {
+        int n = a.length();
+        int cnt = 0;
+        for (int i = 0; i < n; i++) {
+            if (a.charAt(i) != b.charAt(i)) cnt++;
         }
-        if (diff == 1) return true;
-        return false;
+        return cnt == 1;
     }
     
-    static class Node {
-        String word;
-        int count;
-        
-        public Node (String word, int count) {
-            this.word = word;
-            this.count = count;
+    private void dfs(int depth, String text, String[] words, String target, boolean[] visited) {
+        if (text.equals(target)) {
+            answer = Math.min(answer, depth);
+            return;
+        }
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (visited[i]) continue;
+            if (compare(text, word)) {
+                visited[i] = true;
+                dfs(depth+1, word, words, target, visited);
+                visited[i] = false;
+            }
         }
     }
 }
