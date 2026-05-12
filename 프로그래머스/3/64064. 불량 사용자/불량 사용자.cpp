@@ -1,65 +1,70 @@
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
 #include <iostream>
-#include <set>
-#include <functional>
-#include <algorithm>
 
 using namespace std;
 
-int solution(vector<string> user_id, vector<string> banned_id) {
-    int answer = 0;
-    int n = user_id.size();
-    int m = banned_id.size();
-    
-    auto compare = [&](string target) -> vector<int> {
-        vector<int> vec;
-        for (int i = 0; i < n; i++) {
-            const string& str = user_id[i];
-            if (str.length() != target.length()) continue;
-            bool flag = false;
-            for (int i = 0; i < str.length(); i++) {
-                if (target[i] == '*') continue;
-                if (target[i] != str[i]) {
-                    flag = true;
+vector<string> func(vector<string> user_id, string id) {
+    vector<string> result;
+    for (string t : user_id) {
+        if (t.length() != id.length()) continue;
+
+        bool same = true;
+        for (int i = 0; i < id.length(); i++) {
+            if (id[i] == '*') continue;
+            if (t[i] == id[i]) continue;
+            same = false;
+            break;
+        }
+        if (same) result.push_back(t);
+    }
+    return result;
+}
+
+vector<vector<string>> result;
+unordered_map<string, bool> visited;
+unordered_set<int> st;
+
+void dfs(int idx, const vector<string>& user_id, vector<string> comb) {
+    if (idx == result.size()) {
+        int r = 0;
+        for (int i = 0; i < user_id.size(); i++) {
+            r <<= 1;
+            for (string c : comb) {
+                if (c == user_id[i]) {
+                    r |= 1;
                     break;
                 }
             }
-            if (!flag) vec.push_back(i);
         }
-        return vec;
-    };
-    
-    vector<vector<int>> matches(m);
-    for (int i = 0; i < m; i++) {
-        matches[i] = (compare(banned_id[i]));
+        
+        st.insert(r);
+        return;
     }
     
-    set<string> uniq;
-    vector<int> used(n, false);
-    vector<string> cur;
-    function<void(int)> dfs = [&](int idx) {
-        if (idx == m) {
-            vector<string> keyv = cur;
-            
-            sort(keyv.begin(), keyv.end());
-            string key;
-            for (string k : keyv) key += k;
-            uniq.insert(key);
-            return;
-        }
-        
-        for (int i : matches[idx]) {
-            if (used[i]) continue;
-            used[i] = true;
-            cur.push_back(user_id[i]);
-            dfs(idx + 1);
-            cur.pop_back();
-            used[i] = false;
-        }
-        
-    };
+    for (string id : result[idx]) {
+        if (visited[id]) continue;
+        visited[id] = true;
+        comb.push_back(id);
+        dfs(idx+1, user_id, comb);
+        comb.pop_back();
+        visited[id] = false;
+    }
+}
+
+int solution(vector<string> user_id, vector<string> banned_id) {
+    int n = banned_id.size();
+    result.resize(n);
+    for (string s : user_id) {
+        visited[s] = false;
+    }
+    for (int i = 0; i < n; i++) {
+        result[i] = func(user_id, banned_id[i]);
+    }
     
-    dfs(0);
-    return uniq.size();
+    vector<string> comb;
+    dfs(0, user_id, comb);
+    return st.size();
 }
