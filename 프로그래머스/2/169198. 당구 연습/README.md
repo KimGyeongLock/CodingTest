@@ -1,10 +1,10 @@
 # [level 2] 당구 연습 - 169198 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/169198) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/169198?language=java) 
 
 ### 성능 요약
 
-메모리: 4.16 MB, 시간: 0.43 ms
+메모리: 78.7 MB, 시간: 0.27 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 12월 18일 21:52:50
+2026년 06월 25일 22:26:13
 
 ### 문제 설명
 
