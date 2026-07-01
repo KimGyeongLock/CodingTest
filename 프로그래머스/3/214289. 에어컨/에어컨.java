@@ -1,14 +1,11 @@
 import java.util.*;
-
 class Solution {
-    static final int INF = 1_000_000_000;
-    static final int OFFSET = 10; // 음수 방지 0 ~ 50
-    static final int MAX = 51;
-    
+    static int INF = 1_000_000_000;
+    static int OFFSET = 10;
+    static int MAX = 51;
     public int solution(int temperature, int t1, int t2, int a, int b, int[] onboard) {
         int n = onboard.length;
-        
-        int[][] dp = new int[n][MAX]; // 시간/온도
+        int[][] dp = new int[n][MAX];
         
         for (int i = 0; i < n; i++) {
             Arrays.fill(dp[i], INF);
@@ -19,43 +16,34 @@ class Solution {
         for (int time = 0; time < n - 1; time++) {
             for (int idx = 0; idx < MAX; idx++) {
                 if (dp[time][idx] == INF) continue;
-                
                 int curTemp = idx - OFFSET;
                 
-                if (onboard[time] == 1 && (curTemp < t1 || curTemp > t2)) {
-                    continue;
-                } 
+                if (onboard[time] == 1 && (curTemp < t1 || curTemp > t2)) continue;
                 
                 // 1. 에어컨 OFF
                 int nextTemp = curTemp;
-                if (curTemp < temperature) nextTemp++;
-                else if (curTemp > temperature) nextTemp--;
+                if (temperature < curTemp) nextTemp -= 1;
+                else if (temperature > curTemp) nextTemp += 1;
+                update(dp, time + 1, nextTemp + OFFSET, dp[time][idx]);
                 
-                dp[time + 1][nextTemp + OFFSET] = Math.min(dp[time + 1][nextTemp + OFFSET], dp[time][idx]);
-                // update(dp, time + 1, nextTemp + OFFSET, dp[time][idx]);
+                // 2. 에어컨 ON - 온도 떨
+                update(dp, time + 1, curTemp + OFFSET - 1, dp[time][curTemp + OFFSET] + a);
                 
-                // 2. 에어컨 ON - 온도 내리기
-                update(dp, time + 1, curTemp - 1 + OFFSET, dp[time][idx] + a);
-                
-                // 3. 에어컨 ON - 온도 올리기
-                update(dp, time + 1, curTemp + 1 + OFFSET, dp[time][idx] + a);
+                // 3. 에어컨 ON - 온도 상
+                update(dp, time + 1, curTemp + OFFSET + 1, dp[time][curTemp + OFFSET] + a);
                 
                 // 4. 에어컨 ON - 온도 유지
-                update(dp, time + 1, curTemp + OFFSET, dp[time][idx] + b);
+                update(dp, time + 1, curTemp + OFFSET, dp[time][curTemp + OFFSET] + b);
             }
         }
         
         int answer = INF;
-        
         for (int idx = 0; idx < MAX; idx++) {
-            int temp = idx - OFFSET;
-            
-            if (onboard[n - 1] == 1 && (temp < t1 || temp > t2)) {
-                continue;
-            }
-            
+            int curTemp = idx - OFFSET;
+            if (onboard[n - 1] == 1 && (curTemp < t1 || curTemp > t2)) continue;
             answer = Math.min(answer, dp[n - 1][idx]);
         }
+        
         return answer;
     }
     
