@@ -1,10 +1,10 @@
 # [level 3] n + 1 카드게임 - 258707 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/258707) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/258707?language=java) 
 
 ### 성능 요약
 
-메모리: 4.2 MB, 시간: 1.32 ms
+메모리: 84.4 MB, 시간: 5.47 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 12월 09일 18:12:24
+2026년 07월 03일 17:58:26
 
 ### 문제 설명
 
