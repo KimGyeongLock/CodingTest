@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 4.13 MB, 시간: 44.70 ms
+메모리: 91.9 MB, 시간: 6.11 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 10월 04일 00:32:52
+2026년 07월 14일 17:22:12
 
 ### 문제 설명
 
@@ -60,13 +60,13 @@
 <p>다음은 카드가 몇 장 제거된 상태의 게임 화면에서 커서를 이동하는 예시입니다.<br>
 아래 그림에서 빈 칸은 이미 카드가 제거되어 없어진 칸을 의미하며, 그림이 그려진 칸은 카드 앞 면에 그려진 그림을 나타냅니다.</p>
 
-<p><img src="https://grepp-programmers.s3.ap-northeast-2.amazonaws.com/files/production/bd1c06b3-6684-480a-85e6-53f1123b0770/2021_kakao_card_01.png" title="" alt="2021_kakao_card_01.png"><br>
+<p><img src="https://asset.programmers.co.kr/files/production/bd1c06b3-6684-480a-85e6-53f1123b0770/2021_kakao_card_01.png" title="" alt="2021_kakao_card_01.png"><br>
 예시에서 커서는 두번째 행, 첫번째 열 위치에서 시작하였습니다.<br>
-<img src="https://grepp-programmers.s3.ap-northeast-2.amazonaws.com/files/production/8d9008a0-a933-44c7-92a8-96b701483d6e/2021_kakao_card_02.png" title="" alt="2021_kakao_card_02.png"><br>
+<img src="https://asset.programmers.co.kr/files/production/8d9008a0-a933-44c7-92a8-96b701483d6e/2021_kakao_card_02.png" title="" alt="2021_kakao_card_02.png"><br>
 [Enter] 입력, ↓ 이동, [Ctrl]+→ 이동, [Enter] 입력 = 키 조작 4회<br>
-<img src="https://grepp-programmers.s3.ap-northeast-2.amazonaws.com/files/production/89b256d7-b8a8-4fb1-a1f4-84407a029d03/2021_kakao_card_03.png" title="" alt="2021_kakao_card_03.png"><br>
+<img src="https://asset.programmers.co.kr/files/production/89b256d7-b8a8-4fb1-a1f4-84407a029d03/2021_kakao_card_03.png" title="" alt="2021_kakao_card_03.png"><br>
 [Ctrl]+↑ 이동, [Enter] 입력, [Ctrl]+← 이동, [Ctrl]+↓ 이동, [Enter] 입력 = 키 조작 5회<br>
-<img src="https://grepp-programmers.s3.ap-northeast-2.amazonaws.com/files/production/96b37dbd-bba1-47e0-89e5-7a3e518eab24/2021_kakao_card_04.png" title="" alt="2021_kakao_card_04.png"><br>
+<img src="https://asset.programmers.co.kr/files/production/96b37dbd-bba1-47e0-89e5-7a3e518eab24/2021_kakao_card_04.png" title="" alt="2021_kakao_card_04.png"><br>
 [Ctrl]+→ 이동, [Enter] 입력, [Ctrl]+↑ 이동, [Ctrl]+← 이동, [Enter] 입력 = 키 조작 5회</p>
 
 <p>위와 같은 방법으로 커서를 이동하여 카드를 선택하고 그림을 맞추어 카드를 모두 제거하기 위해서는 총 14번(방향 이동 8번, [Enter] 키 입력 6번)의 키 조작 횟수가 필요합니다.</p>
@@ -129,7 +129,7 @@
 <p><strong>입출력 예 #2</strong><br>
 입력으로 주어진 게임 화면은 아래 그림과 같습니다.</p>
 
-<p><img src="https://grepp-programmers.s3.ap-northeast-2.amazonaws.com/files/production/5c6e8d3f-2427-42b8-893b-5677cb45aa5d/2021_kakao_card_05.png" title="" alt="2021_kakao_card_05.png"></p>
+<p><img src="https://asset.programmers.co.kr/files/production/5c6e8d3f-2427-42b8-893b-5677cb45aa5d/2021_kakao_card_05.png" title="" alt="2021_kakao_card_05.png"></p>
 
 <p>위 게임 화면에서 모든 카드를 제거하기 위한 키 조작 횟수의 최솟값은 16번 입니다.</p>
 
