@@ -20,7 +20,7 @@ class Solution {
         }
         
         String new_x = "";
-        while(cnt > 0) {
+        while (cnt > 0) {
             new_x = (cnt % 2) + new_x;
             cnt /= 2;
         }
