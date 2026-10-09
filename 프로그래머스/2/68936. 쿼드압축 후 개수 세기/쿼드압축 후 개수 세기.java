@@ -4,11 +4,11 @@ class Solution {
     public int[] solution(int[][] arr) {
         this.arr = arr;
         answer = new int[2];
-        func(0, 0, arr.length, arr[0].length, 0);
+        func(0, 0, arr.length, arr[0].length);
         return answer;
     }
     
-    private void func(int x1, int y1, int x2, int y2, int depth) {
+    private void func(int x1, int y1, int x2, int y2) {
         int first = -1;
         boolean pass = true;
         for (int i = x1; i < x2; i++) {
@@ -22,7 +22,7 @@ class Solution {
             if (!pass) break;
         }
         
-        if (pass && first != -1) {
+        if (pass) {
             answer[first]++;
             return;
         }
@@ -31,9 +31,9 @@ class Solution {
         
         int midX = (x1 + x2) / 2;
         int midY = (y1 + y2) / 2;
-        func(x1, y1, midX, midY, depth + 1);
-        func(x1, midY, midX, y2, depth + 1);
-        func(midX, y1, x2, midY, depth + 1);
-        func(midX, midY, x2, y2, depth + 1);
+        func(x1, y1, midX, midY);
+        func(x1, midY, midX, y2);
+        func(midX, y1, x2, midY);
+        func(midX, midY, x2, y2);
     }
 }
