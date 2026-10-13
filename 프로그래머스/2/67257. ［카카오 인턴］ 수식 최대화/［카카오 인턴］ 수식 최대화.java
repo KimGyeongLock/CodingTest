@@ -16,7 +16,7 @@ class Solution {
                 num = "";
             }
         }
-        if (num != "") list.add(num);
+        if (!num.isEmpty()) list.add(num);
         
         boolean[] visited = new boolean[3];
         dfs(list, visited);
@@ -35,7 +35,6 @@ class Solution {
         for (int i = 0; i < 3; i++) {
             if (visited[i]) continue;
             visited[i] = true;
-            // calculate(list, exp[i]);
             dfs(calculate(list, exp[i]), visited);
             visited[i] = false;
         }
