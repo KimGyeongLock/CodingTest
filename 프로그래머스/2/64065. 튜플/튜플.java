@@ -1,36 +1,37 @@
 import java.util.*;
 
 class Solution {
-    public int[] solution(String s) {
-        int cnt = -1;
-        for (char c : s.toCharArray()) if (c == '}') cnt++;
-        int[] answer = new int[cnt];
-    
-        Set<Integer>[] list = new HashSet[cnt];
-        Set<Integer> set = new HashSet<>();
-        String num = "";
+    public int[] solution(String s) {        
+        s = s.substring(2, s.length() - 2);
+        String[] groups = s.split("\\},\\{");
         
-        for (int i = 1; i < s.length() - 1; i++) {
-            if (s.charAt(i) >= '0' && s.charAt(i) <= '9') {
-                num += String.valueOf(s.charAt(i));
-            } else if (s.charAt(i) == '}') {
-                if (!num.isEmpty()) set.add(Integer.parseInt(num));
-                list[set.size() - 1] = set;
-                set = new HashSet<>();
-                num = "";
-            }
-            if (s.charAt(i) == ',' && !num.isEmpty()) {
+//         for (String g : groups) {
+//             System.out.println(g);
+//         }
+        
+        List<Set<Integer>> list = new ArrayList<>();
+        
+        for (String group : groups) {
+            Set<Integer> set = new HashSet<>();
+            
+            for (String num : group.split(",")) {
                 set.add(Integer.parseInt(num));
-                num = "";
             }
+            
+            list.add(set);
         }
         
-        Set<Integer> ss = new HashSet<>();
-        for (int i = 0; i < cnt; i++) {
-            for (int a : list[i]) {
-                if (ss.contains(a)) continue;
-                answer[i] = a;
-                ss.add(a);
+        list.sort(Comparator.comparingInt(Set::size));
+        
+        int[] answer = new int[list.size()];
+        Set<Integer> visited = new HashSet<>();
+        
+        for (int i = 0; i < list.size(); i++) {
+            for (int num : list.get(i)) {
+                if (visited.add(num)) {
+                    answer[i] = num;
+                    break;
+                }
             }
         }
         
